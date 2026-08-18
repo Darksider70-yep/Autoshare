@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autoshare - Split TukTuk Rides & Save Money</title>
+  <meta name="description" content="Autoshare helps college and university students find co-travelers to share TukTuk (auto-rickshaw) rides, split fares, and travel safely to hostels, PGs, and flats.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Header -->
+    <header>
+      <a href="#" class="logo">
+        <div class="logo-icon">🛺</div>
+        <span>Auto</span>share
+      </a>
+      <nav>
+        <a href="#how-it-works">How it Works</a>
+        <a href="#active-rides">Find Rides</a>
+        <button class="btn btn-primary" id="open-post-ride-btn">
+          <i data-lucide="plus-circle"></i> Post a Ride
+        </button>
+      </nav>
+    </header>
+
+    <!-- Hero & Search -->
+    <main>
+      <section class="hero">
+        <h1>Share <span>TukTuks</span>. Split Fares. Meet Classmates.</h1>
+        <p>Save money on daily commuting. Connect with students heading to the same hostels, PGs, or apartments after class and share the auto charge.</p>
+        
+        <!-- Search Container -->
+        <div class="search-container">
+          <div class="search-grid">
+            <div class="search-field">
+              <label for="search-from">From</label>
+              <div class="input-wrapper">
+                <i data-lucide="map-pin" class="input-icon"></i>
+                <select id="search-from">
+                  <option value="Campus Gate 1">Campus Gate 1</option>
+                  <option value="Campus Gate 2">Campus Gate 2</option>
+                  <option value="Library Block">Library Block</option>
+                  <option value="Academic Block C">Academic Block C</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="search-field">
+              <label for="search-to">To (Destination)</label>
+              <div class="input-wrapper">
+                <i data-lucide="navigation" class="input-icon"></i>
+                <input type="text" id="search-to" placeholder="Search Hostel, PG, Flat...">
+              </div>
+            </div>
+            
+            <div class="search-field">
+              <label for="search-time">Departure Time</label>
+              <div class="input-wrapper">
+                <i data-lucide="clock" class="input-icon"></i>
+                <select id="search-time">
+                  <option value="any">Any Time</option>
+                  <option value="now">Leaving Next 30 Mins</option>
+                  <option value="1hr">Leaving Next 1 Hour</option>
+                  <option value="evening">After 5:00 PM</option>
+                </select>
+              </div>
+            </div>
+            
+            <button class="btn btn-primary" id="search-btn" style="height: 48px; border-radius: 12px;">
+              <i data-lucide="search"></i> Search Rides
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dashboard Grid -->
+      <section class="dashboard" id="active-rides">
+        <!-- Live Rides Feed -->
+        <div class="feed-container">
+          <div class="feed-header">
+            <h2 class="feed-title">Active Ride Offers <span class="badge" id="rides-count">0</span></h2>
+            <button class="btn btn-secondary btn-sm" id="btn-reset-filters" style="padding: 0.5rem 1rem; font-size: 0.85rem; display: none;">
+              <i data-lucide="refresh-cw"></i> Reset Filter
+            </button>
+          </div>
+          
+          <div class="rides-list" id="rides-feed">
+            <!-- Dynamic ride cards will render here -->
+          </div>
+        </div>
+
+        <!-- Sidebar Panel -->
+        <div class="sidebar-panel">
+          
+          <!-- Stats Card -->
+          <div class="stats-card">
+            <h3>🛺 Autoshare Live Info</h3>
+            <div class="stat-row">
+              <span class="stat-label">Active Groups Today</span>
+              <span class="stat-val" id="stat-active-groups">14</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Avg. Savings Per Student</span>
+              <span class="stat-val">₹45 - ₹60</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Popular Pickup Point</span>
+              <span class="stat-val">Campus Gate 2</span>
+            </div>
+          </div>
+
+          <!-- Popular PG/Hostel Hotspots -->
+          <div class="hotspot-card">
+            <h3>📌 Popular Destination Clusters</h3>
+            <div class="hotspot-list">
+              <div class="hotspot-item" data-destination="Starlight Hostels">
+                <div class="hotspot-details">
+                  <h5>Starlight Hostels</h5>
+                  <span>Student PG Hub • 2.5 km away</span>
+                </div>
+                <span class="hotspot-badge">4 active</span>
+              </div>
+              <div class="hotspot-item" data-destination="Green Meadows Flats">
+                <div class="hotspot-details">
+                  <h5>Green Meadows Flats</h5>
+                  <span>Apartment cluster • 4.1 km away</span>
+                </div>
+                <span class="hotspot-badge">3 active</span>
+              </div>
+              <div class="hotspot-item" data-destination="R.K. Puram PG Zone">
+                <div class="hotspot-details">
+                  <h5>R.K. Puram PG Zone</h5>
+                  <span>PG Zone • 3.5 km away</span>
+                </div>
+                <span class="hotspot-badge">2 active</span>
+              </div>
+              <div class="hotspot-item" data-destination="Royal Residency">
+                <div class="hotspot-details">
+                  <h5>Royal Residency</h5>
+                  <span>Hostel cluster • 1.8 km away</span>
+                </div>
+                <span class="hotspot-badge">1 active</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; 2026 Autoshare. Designed for campus students. Split rides, save money, and build community safely.</p>
+    </footer>
+  </div>
+
+  <!-- Create/Post Ride Modal -->
+  <div class="modal-overlay" id="post-ride-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Create a Ride Share</h3>
+        <button class="modal-close" id="close-post-ride-btn">&times;</button>
+      </div>
+      <form id="post-ride-form">
+        <div class="form-group">
+          <label for="ride-name">Your Name</label>
+          <input type="text" id="ride-name" required placeholder="e.g., Daksh Gehlot">
+        </div>
+        
+        <div class="form-group">
+          <label for="ride-from">Pickup Location</label>
+          <select id="ride-from" required>
+            <option value="Campus Gate 1">Campus Gate 1</option>
+            <option value="Campus Gate 2">Campus Gate 2</option>
+            <option value="Library Block">Library Block</option>
+            <option value="Academic Block C">Academic Block C</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="ride-to">Destination (Hostel/PG/Flats)</label>
+          <input type="text" id="ride-to" required placeholder="e.g., Starlight Hostels or Sector 15 Flats">
+        </div>
+
+        <div class="form-group">
+          <label for="ride-time">Departure Time</label>
+          <input type="time" id="ride-time" required>
+        </div>
+
+        <div class="form-group">
+          <label>Available Seats (Max in TukTuk is 3-4)</label>
+          <div class="seats-selector">
+            <button type="button" class="seat-btn active" data-seats="1">1 Seat</button>
+            <button type="button" class="seat-btn" data-seats="2">2 Seats</button>
+            <button type="button" class="seat-btn" data-seats="3">3 Seats</button>
+          </div>
+          <input type="hidden" id="ride-seats" value="1">
+        </div>
+
+        <div class="form-group">
+          <label for="ride-fare">Estimated Total Fare (₹)</label>
+          <input type="number" id="ride-fare" min="30" max="300" step="10" value="120" required>
+          <small style="color: var(--text-muted); display: block; margin-top: 4px;">Standard auto charge to most hostels ranges between ₹80 - ₹150.</small>
+        </div>
+
+        <div class="form-group" style="background: rgba(255, 190, 26, 0.05); padding: 1rem; border-radius: 10px; border: 1.5px dashed var(--accent-gold-glow);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 600; font-size: 0.9rem;">Estimated Cost Per Student:</span>
+            <span style="color: var(--accent-gold); font-weight: 800; font-size: 1.2rem;" id="fare-per-person">₹60.00</span>
+          </div>
+          <small style="color: var(--text-muted); display: block; margin-top: 4px;">Divided equally among the rider and co-travelers.</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; margin-top: 1rem;">
+          <i data-lucide="send"></i> Post Ride Share
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Chat Drawer UI -->
+  <div class="chat-trigger" id="chat-trigger-btn">
+    <i data-lucide="message-square"></i>
+  </div>
+
+  <div class="chat-panel" id="chat-drawer">
+    <div class="chat-header">
+      <div class="chat-user-info">
+        <div class="chat-user-avatar" id="chat-group-avatar">🛺</div>
+        <div>
+          <h4 style="font-size: 0.95rem; font-weight: 700;" id="chat-group-title">Autoshare Coordination</h4>
+          <span style="font-size: 0.75rem; color: var(--color-success);">● Online</span>
+        </div>
+      </div>
+      <button class="modal-close" id="close-chat-btn" style="font-size: 1.25rem;">&times;</button>
+    </div>
+    <div class="chat-messages" id="chat-box">
+      <!-- Simulated chat text will populate here -->
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chat-input-field" placeholder="Type coordination message...">
+      <button class="chat-send-btn" id="send-chat-message-btn">
+        <i data-lucide="send" style="width: 18px; height: 18px;"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Toast Notification -->
+  <div class="toast" id="app-toast">
+    <span id="toast-message">Action completed successfully!</span>
+  </div>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Application JS -->
+  <script src="app.js"></script>
+</body>
+</html>
