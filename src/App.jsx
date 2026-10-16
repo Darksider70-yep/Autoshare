@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import HeroSearch from './components/HeroSearch';
 import RidesFeed from './components/RidesFeed';
@@ -14,6 +14,32 @@ export default function App() {
   // Main State
   const [rides, setRides] = useState(initialRidesData);
   const [chatMessages, setChatMessages] = useState(initialChatMessages);
+
+  // Load from Spring Boot backend if running
+  useEffect(() => {
+    fetch('/api/rides')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          const mappedRides = data.map(r => ({
+            id: r.id,
+            creatorName: r.hostName,
+            creatorBranch: 'SRM Campus Student',
+            from: r.pickupGate,
+            to: r.destination,
+            time: r.departureTime ? r.departureTime.substring(11, 16) : '17:00',
+            seatsTotal: r.totalSeats,
+            seatsAvailable: r.seatsAvailable,
+            fareTotal: r.totalFare,
+            coTravelers: r.bookings ? r.bookings.map(b => b.studentName) : []
+          }));
+          setRides(mappedRides);
+        }
+      })
+      .catch(err => {
+        console.warn('Backend not reached, using local fallback:', err);
+      });
+  }, []);
   
   // Search & Filter State
   const [searchFrom, setSearchFrom] = useState('');

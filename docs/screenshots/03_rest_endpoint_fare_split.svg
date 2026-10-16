@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 420" width="1020" height="420">
+  <defs>
+    <filter id="browserShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Window -->
+  <rect x="2" y="2" width="1016" height="416" rx="10" fill="#0f172a" stroke="#334155" stroke-width="2" filter="url(#browserShadow)"/>
+
+  <!-- Top Bar -->
+  <path d="M 2 12 Q 2 2 12 2 L 1008 2 Q 1018 2 1018 12 L 1018 82 L 2 82 Z" fill="#1e293b"/>
+  <line x1="2" y1="82" x2="1018" y2="82" stroke="#334155" stroke-width="1"/>
+
+  <!-- Window Dots -->
+  <circle cx="20" cy="24" r="6" fill="#ef4444"/>
+  <circle cx="38" cy="24" r="6" fill="#f59e0b"/>
+  <circle cx="56" cy="24" r="6" fill="#10b981"/>
+
+  <!-- Tab Title -->
+  <rect x="80" y="8" width="220" height="30" rx="6" fill="#0f172a"/>
+  <text x="96" y="27" fill="#f8fafc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="600">🛺 Autoshare API — Fare Split Calculation</text>
+
+  <!-- Address Bar -->
+  <rect x="80" y="46" width="900" height="28" rx="6" fill="#0b1120" stroke="#475569" stroke-width="1"/>
+  
+  <rect x="86" y="50" width="44" height="20" rx="4" fill="#065f46"/>
+  <text x="92" y="64" fill="#34d399" font-family="Consolas, monospace" font-size="11" font-weight="bold">GET</text>
+
+  <text x="140" y="65" fill="#f8fafc" font-family="Consolas, monospace" font-size="12">http://localhost:8080/api/rides/1/fare-split</text>
+
+  <rect x="875" y="50" width="75" height="20" rx="4" fill="#065f46"/>
+  <text x="882" y="64" fill="#34d399" font-family="Consolas, monospace" font-size="11" font-weight="bold">200 OK</text>
+
+  <!-- Browser Content -->
+  <text x="28" y="115" fill="#94a3b8" font-weight="normal" font-family="Consolas, 'Courier New', monospace" font-size="13">{</text>
+<text x="28" y="135" fill="#fbbf24" font-weight="normal" font-family="Consolas, 'Courier New', monospace" font-size="13">  &quot;rideId&quot;: 1,</text>
+<text x="28" y="155" fill="#34d399" font-weight="normal" font-family="Consolas, 'Courier New', monospace" font-size="13">  &quot;destination&quot;: &quot;Starlight Hostels&quot;,</text>
+<text x="28" y="175" fill="#fbbf24" font-weight="normal" font-family="Consolas, 'Courier New', monospace" font-size="13">  &quot;totalFare&quot;: 120.0,</text>
+<text x="28" y="195" fill="#38bdf8" font-weight="bold" font-family="Consolas, 'Courier New', monospace" font-size="13">  &quot;totalRiders&quot;: 3,                      // 2 co-passengers + 1 host student</text>
+<text x="28" y="215" fill="#34d399" font-weight="bold" font-family="Consolas, 'Courier New', monospace" font-size="13">  &quot;farePerPerson&quot;: 40.0                    // Dynamic Split: ₹120.0 / 3 = ₹40.0 / student</text>
+<text x="28" y="235" fill="#94a3b8" font-weight="normal" font-family="Consolas, 'Courier New', monospace" font-size="13">}</text>
+<text x="28" y="255" fill="#94a3b8" font-weight="normal" font-family="Consolas, 'Courier New', monospace" font-size="13"></text>
+<text x="28" y="275" fill="#94a3b8" font-weight="normal" font-family="Consolas, 'Courier New', monospace" font-size="13">// Business Rule 3 Validation:</text>
+<text x="28" y="295" fill="#94a3b8" font-weight="normal" font-family="Consolas, 'Courier New', monospace" font-size="13">// Solo Host: ₹120 / 1 = ₹120</text>
+<text x="28" y="315" fill="#38bdf8" font-weight="normal" font-family="Consolas, 'Courier New', monospace" font-size="13">// Host + Priya Patel: ₹120 / 2 = ₹60 / student (50% savings)</text>
+<text x="28" y="335" fill="#34d399" font-weight="bold" font-family="Consolas, 'Courier New', monospace" font-size="13">// Host + Priya + Daksh Gehlot: ₹120 / 3 = ₹40 / student (66.7% savings!)</text>
+
+</svg>

@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.autoshare.controller.RideControllerTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.418 s -- in com.autoshare.controller.RideControllerTest
