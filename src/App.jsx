@@ -8,9 +8,14 @@ import PostRideModal from './components/PostRideModal';
 import ChatDrawer from './components/ChatDrawer';
 import Toast from './components/Toast';
 import Footer from './components/Footer';
+import UserRecordsView from './components/UserRecordsView';
+import MicroservicesConsole from './components/MicroservicesConsole';
 import { initialRidesData, initialChatMessages } from './data/mockRides';
 
 export default function App() {
+  // Active Navigation Tab: 'rides' | 'users' | 'microservices'
+  const [activeTab, setActiveTab] = useState('rides');
+
   // Main State
   const [rides, setRides] = useState(initialRidesData);
   const [chatMessages, setChatMessages] = useState(initialChatMessages);
@@ -100,87 +105,67 @@ export default function App() {
     setAppliedFilters({ from: '', to: '', time: 'any' });
   };
 
-  const handleSelectHotspot = (destination) => {
-    setSearchTo(destination);
-    setAppliedFilters(prev => ({ ...prev, to: destination }));
-    const element = document.getElementById('active-rides');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+  const handleSelectHotspot = (destName) => {
+    setSearchTo(destName);
+    setAppliedFilters(prev => ({ ...prev, to: destName }));
   };
 
-  // Helper for current time HH:MM
-  const getCurrentTimeStr = () => {
-    const now = new Date();
-    const hrs = String(now.getHours()).padStart(2, '0');
-    const mins = String(now.getMinutes()).padStart(2, '0');
-    return `${hrs}:${mins}`;
-  };
-
-  // Join Ride Action
+  // Join Ride Action with Spring Boot / fallback
   const handleJoinRide = (rideId) => {
-    const ride = rides.find(r => r.id === rideId);
-    if (!ride || ride.seatsAvailable <= 0) return;
+    const studentName = 'Daksh Gehlot';
+    const studentEmail = 'daksh.g@srmist.edu.in';
 
-    // Update ride state
-    setRides(prev => prev.map(r => {
-      if (r.id === rideId) {
-        return {
-          ...r,
-          seatsAvailable: r.seatsAvailable - 1,
-          coTravelers: [...r.coTravelers, 'You']
-        };
-      }
-      return r;
-    }));
-
-    // Add system message to chat
-    setChatMessages(prev => ({
-      ...prev,
-      [rideId]: [
-        ...(prev[rideId] || []),
-        {
-          sender: 'System',
-          text: 'You joined the ride. Say hi to coordinate pickup!',
-          time: getCurrentTimeStr()
+    fetch(`/api/rides/${rideId}/book`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ studentName, studentEmail })
+    })
+      .then(res => {
+        if (!res.ok) {
+          return res.json().then(errData => { throw errData; });
         }
-      ]
-    }));
-
-    triggerToast(`Successfully joined ${ride.creatorName}'s ride to ${ride.to}!`);
-    setActiveChatRideId(rideId);
-    
-    // Automatically open coordination chat after a brief moment
-    setTimeout(() => {
-      setIsChatOpen(true);
-    }, 500);
+        return res.json();
+      })
+      .then(updatedRide => {
+        setRides(prev => prev.map(r => {
+          if (r.id === rideId) {
+            return {
+              ...r,
+              seatsAvailable: updatedRide.seatsAvailable,
+              coTravelers: updatedRide.bookings ? updatedRide.bookings.map(b => b.studentName) : [...r.coTravelers, studentName]
+            };
+          }
+          return r;
+        }));
+        triggerToast(`Seat confirmed via Spring Boot backend! Fare split updated.`);
+      })
+      .catch(err => {
+        // Fallback local update
+        setRides(prevRides => 
+          prevRides.map(r => {
+            if (r.id === rideId && r.seatsAvailable > 0) {
+              const newAvailable = r.seatsAvailable - 1;
+              const newCoTravelers = r.coTravelers.includes(studentName) 
+                ? r.coTravelers 
+                : [...r.coTravelers, studentName];
+              return {
+                ...r,
+                seatsAvailable: newAvailable,
+                coTravelers: newCoTravelers
+              };
+            }
+            return r;
+          })
+        );
+        triggerToast(err?.message || `Seat claimed! Split updated.`);
+      });
   };
 
-  // Create/Post new Ride Action
-  const handlePostRide = (newRideData) => {
-    const newId = rides.length + 1;
-    const newRide = {
-      id: newId,
-      ...newRideData
-    };
-
+  // Post Ride Action
+  const handlePostRide = (newRide) => {
     setRides(prev => [newRide, ...prev]);
     setActiveGroupsCount(prev => prev + 1);
-
-    // Seed chat for new ride
-    setChatMessages(prev => ({
-      ...prev,
-      [newId]: [
-        {
-          sender: 'System',
-          text: `Ride created by ${newRide.creatorName}. Waiting for classmates to join!`,
-          time: getCurrentTimeStr()
-        }
-      ]
-    }));
-
-    setIsModalOpen(false);
-    triggerToast('Your TukTuk ride share offer has been published!');
+    triggerToast('Ride published successfully across campus network!');
   };
 
   // Chat Actions
@@ -190,33 +175,35 @@ export default function App() {
   };
 
   const handleOpenDefaultChat = () => {
-    if (rides.length > 0) {
-      setActiveChatRideId(rides[0].id);
-    }
     setIsChatOpen(true);
   };
 
   const handleSendMessage = (text) => {
-    if (!activeChatRideId) return;
+    if (!text.trim()) return;
 
-    const timeStr = getCurrentTimeStr();
-    const currentRide = rides.find(r => r.id === activeChatRideId);
+    const getCurrentTimeStr = () => {
+      const now = new Date();
+      return `${now.getHours() % 12 || 12}:${now.getMinutes().toString().padStart(2, '0')} ${now.getHours() >= 12 ? 'PM' : 'AM'}`;
+    };
+
+    const newMsg = {
+      sender: 'You',
+      text: text.trim(),
+      time: getCurrentTimeStr()
+    };
 
     setChatMessages(prev => ({
       ...prev,
-      [activeChatRideId]: [
-        ...(prev[activeChatRideId] || []),
-        { sender: 'You', text, time: timeStr }
-      ]
+      [activeChatRideId]: [...(prev[activeChatRideId] || []), newMsg]
     }));
 
-    // Trigger simulated creator response
+    // Simulated Auto-Reply from Ride Host
+    const currentRide = rides.find(r => r.id === activeChatRideId);
     if (currentRide) {
       setTimeout(() => {
         const replies = [
-          `Awesome! I am waiting near the tea stall by ${currentRide.from}. I have a blue backpack.`,
-          `Perfect, let's meet in 5 minutes! I'm heading out of lecture hall now.`,
-          `Hey! I'm talking to the auto driver right now at ${currentRide.from}, see you shortly!`,
+          `Hey! Sounds great. Meet me at ${currentRide.from} near the main gate steps.`,
+          `Yes, auto fare will be exactly ₹${Math.round(currentRide.fareTotal / ((currentRide.seatsTotal - currentRide.seatsAvailable) + 2))} each!`,
           `Got it! I am wearing a black hoodie. Let me know when you arrive.`
         ];
         const randomReply = replies[Math.floor(Math.random() * replies.length)];
@@ -236,37 +223,52 @@ export default function App() {
 
   return (
     <div className="app-container">
-      {/* Top Navigation */}
-      <Navbar onOpenPostModal={() => setIsModalOpen(true)} />
+      {/* Top Navigation Bar with Tabs */}
+      <Navbar 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab} 
+        onOpenPostModal={() => setIsModalOpen(true)} 
+      />
 
-      {/* Hero & Search Header */}
-      <main>
-        <HeroSearch 
-          searchFrom={searchFrom}
-          setSearchFrom={setSearchFrom}
-          searchTo={searchTo}
-          setSearchTo={setSearchTo}
-          searchTime={searchTime}
-          setSearchTime={setSearchTime}
-          onSearch={handleSearch}
-        />
+      {/* Main View Router */}
+      <main className="main-content-layout">
+        {activeTab === 'rides' && (
+          <>
+            <HeroSearch 
+              searchFrom={searchFrom}
+              setSearchFrom={setSearchFrom}
+              searchTo={searchTo}
+              setSearchTo={setSearchTo}
+              searchTime={searchTime}
+              setSearchTime={setSearchTime}
+              onSearch={handleSearch}
+            />
 
-        {/* Dashboard Live Feed & Sidebar */}
-        <section className="dashboard" id="active-rides">
-          <RidesFeed 
-            rides={filteredRides}
-            totalCount={filteredRides.length}
-            isFiltered={isFiltered}
-            onResetFilters={handleResetFilters}
-            onJoinRide={handleJoinRide}
-            onOpenChat={handleOpenChat}
-          />
+            <section className="dashboard" id="active-rides">
+              <RidesFeed 
+                rides={filteredRides}
+                totalCount={filteredRides.length}
+                isFiltered={isFiltered}
+                onResetFilters={handleResetFilters}
+                onJoinRide={handleJoinRide}
+                onOpenChat={handleOpenChat}
+              />
 
-          <aside className="sidebar-panel">
-            <SidebarStats activeGroupsCount={activeGroupsCount} />
-            <HotspotClusters onSelectDestination={handleSelectHotspot} />
-          </aside>
-        </section>
+              <aside className="sidebar-panel">
+                <SidebarStats activeGroupsCount={activeGroupsCount} />
+                <HotspotClusters onSelectDestination={handleSelectHotspot} />
+              </aside>
+            </section>
+          </>
+        )}
+
+        {activeTab === 'users' && (
+          <UserRecordsView onTriggerToast={triggerToast} />
+        )}
+
+        {activeTab === 'microservices' && (
+          <MicroservicesConsole onTriggerToast={triggerToast} />
+        )}
       </main>
 
       {/* Footer */}

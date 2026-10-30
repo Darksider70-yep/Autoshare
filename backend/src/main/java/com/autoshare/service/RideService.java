@@ -1,5 +1,6 @@
 package com.autoshare.service;
 
+import com.autoshare.client.UserVerificationClient;
 import com.autoshare.dto.BookingRequest;
 import com.autoshare.dto.BookingResponse;
 import com.autoshare.dto.FareSplitResponse;
@@ -30,14 +31,22 @@ public class RideService {
 
     private final RideRepository rideRepository;
     private final BookingRepository bookingRepository;
+    private final UserVerificationClient userVerificationClient;
     private final String campusEmailDomain;
 
-    // Constructor Injection (Spring Boot automatically injects matching Spring Beans)
     public RideService(RideRepository rideRepository,
                        BookingRepository bookingRepository,
                        @Value("${autoshare.campus.email-domain:@srmist.edu.in}") String campusEmailDomain) {
+        this(rideRepository, bookingRepository, null, campusEmailDomain);
+    }
+
+    public RideService(RideRepository rideRepository,
+                       BookingRepository bookingRepository,
+                       @org.springframework.beans.factory.annotation.Autowired(required = false) UserVerificationClient userVerificationClient,
+                       @Value("${autoshare.campus.email-domain:@srmist.edu.in}") String campusEmailDomain) {
         this.rideRepository = rideRepository;
         this.bookingRepository = bookingRepository;
+        this.userVerificationClient = userVerificationClient;
         this.campusEmailDomain = campusEmailDomain;
     }
 
@@ -94,6 +103,14 @@ public class RideService {
         // Business Rule 5: Only campus domain emails are authorized to book
         if (!email.endsWith(this.campusEmailDomain.toLowerCase())) {
             throw new InvalidCampusEmailException(email, this.campusEmailDomain);
+        }
+
+        // Microservice Verification Rule: Verify commuter account status via User Microservice client
+        if (userVerificationClient != null) {
+            com.autoshare.dto.UserVerificationResponse verification = userVerificationClient.verifyCommuter(email);
+            if (verification != null && verification.isVerified() && !verification.isEligibleToRide()) {
+                throw new IllegalStateException("Student account " + email + " is suspended or pending KYC verification.");
+            }
         }
 
         // Business Rule 1: A student cannot join a ride that is already FULL
