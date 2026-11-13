@@ -59,22 +59,22 @@ def add_heading_3(doc, text):
 def add_heading_4(doc, text):
     return add_p(doc, text, size_pt=12, bold=True, italic=True, align=WD_ALIGN_PARAGRAPH.LEFT, space_before=8, space_after=4)
 
-def add_image_with_caption(doc, img_path, caption_text, width_inches=5.8):
+def add_image_with_caption(doc, img_path, caption_text, width_inches=4.3):
     if os.path.exists(img_path):
         p_img = doc.add_paragraph()
         p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p_img.paragraph_format.space_before = Pt(8)
-        p_img.paragraph_format.space_after = Pt(4)
+        p_img.paragraph_format.space_before = Pt(3)
+        p_img.paragraph_format.space_after = Pt(1)
         run = p_img.add_run()
         run.add_picture(img_path, width=Inches(width_inches))
         
         p_cap = doc.add_paragraph()
         p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p_cap.paragraph_format.space_before = Pt(2)
-        p_cap.paragraph_format.space_after = Pt(10)
+        p_cap.paragraph_format.space_before = Pt(1)
+        p_cap.paragraph_format.space_after = Pt(4)
         run_cap = p_cap.add_run(caption_text)
         run_cap.font.name = "Times New Roman"
-        run_cap.font.size = Pt(10)
+        run_cap.font.size = Pt(9)
         run_cap.font.bold = True
         run_cap.font.italic = True
     else:
@@ -84,7 +84,7 @@ def add_code_block(doc, code_text):
     table = doc.add_table(rows=1, cols=1)
     table.alignment = WD_TABLE_ALIGNMENT.CENTER
     cell = table.cell(0, 0)
-    set_cell_margins(cell, top=120, bottom=120, left=180, right=180)
+    set_cell_margins(cell, top=80, bottom=80, left=140, right=140)
     set_cell_shading(cell, "F8FAFC")
     
     # Border
@@ -102,26 +102,21 @@ def add_code_block(doc, code_text):
     p = cell.paragraphs[0]
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(0)
-    p.paragraph_format.line_spacing = 1.15
+    p.paragraph_format.line_spacing = 1.05
     run = p.add_run(code_text)
     run.font.name = "Consolas"
-    run.font.size = Pt(8.5)
+    run.font.size = Pt(8)
     run.font.color.rgb = RGBColor(30, 41, 59)
-    
-    # Add spacing after table
-    p_after = doc.add_paragraph()
-    p_after.paragraph_format.space_before = Pt(0)
-    p_after.paragraph_format.space_after = Pt(6)
 
 def add_styled_table(doc, headers, data, col_widths=None, caption=""):
     if caption:
         p_cap = doc.add_paragraph()
         p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p_cap.paragraph_format.space_before = Pt(8)
-        p_cap.paragraph_format.space_after = Pt(4)
+        p_cap.paragraph_format.space_before = Pt(4)
+        p_cap.paragraph_format.space_after = Pt(2)
         run_cap = p_cap.add_run(caption)
         run_cap.font.name = "Times New Roman"
-        run_cap.font.size = Pt(10.5)
+        run_cap.font.size = Pt(9.5)
         run_cap.font.bold = True
         
     table = doc.add_table(rows=len(data) + 1, cols=len(headers))
@@ -132,16 +127,16 @@ def add_styled_table(doc, headers, data, col_widths=None, caption=""):
     for c_idx, h_text in enumerate(headers):
         cell = table.cell(0, c_idx)
         cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
-        set_cell_margins(cell, top=120, bottom=120, left=140, right=140)
+        set_cell_margins(cell, top=50, bottom=50, left=80, right=80)
         set_cell_shading(cell, "E2E8F0")
         p = cell.paragraphs[0]
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p.paragraph_format.space_before = Pt(0)
         p.paragraph_format.space_after = Pt(0)
-        p.paragraph_format.line_spacing = 1.15
+        p.paragraph_format.line_spacing = 1.05
         run = p.add_run(h_text)
         run.font.name = "Times New Roman"
-        run.font.size = Pt(9.5)
+        run.font.size = Pt(8.5)
         run.font.bold = True
         run.font.color.rgb = RGBColor(15, 23, 42)
         
@@ -151,20 +146,19 @@ def add_styled_table(doc, headers, data, col_widths=None, caption=""):
         for c_idx, val in enumerate(row_values):
             cell = table.cell(r_idx + 1, c_idx)
             cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
-            set_cell_margins(cell, top=100, bottom=100, left=140, right=140)
+            set_cell_margins(cell, top=35, bottom=35, left=80, right=80)
             set_cell_shading(cell, bg)
             p = cell.paragraphs[0]
-            # If first column or short, align center; else justify/left
             if c_idx == 0 or len(str(val)) < 15:
                 p.alignment = WD_ALIGN_PARAGRAPH.CENTER
             else:
                 p.alignment = WD_ALIGN_PARAGRAPH.LEFT
             p.paragraph_format.space_before = Pt(0)
             p.paragraph_format.space_after = Pt(0)
-            p.paragraph_format.line_spacing = 1.15
+            p.paragraph_format.line_spacing = 1.05
             run = p.add_run(str(val))
             run.font.name = "Times New Roman"
-            run.font.size = Pt(9)
+            run.font.size = Pt(8)
             run.font.color.rgb = RGBColor(30, 41, 59)
             
     # Apply column widths

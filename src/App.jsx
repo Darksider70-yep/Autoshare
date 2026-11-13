@@ -13,8 +13,13 @@ import MicroservicesConsole from './components/MicroservicesConsole';
 import { initialRidesData, initialChatMessages } from './data/mockRides';
 
 export default function App() {
+  const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+  const initialTabParam = urlParams ? urlParams.get('tab') : null;
+  const initialModalParam = urlParams ? urlParams.get('modal') === 'true' : false;
+  const initialChatParam = urlParams ? urlParams.get('chat') === 'true' : false;
+
   // Active Navigation Tab: 'rides' | 'users' | 'microservices'
-  const [activeTab, setActiveTab] = useState('rides');
+  const [activeTab, setActiveTab] = useState(initialTabParam || 'rides');
 
   // Main State
   const [rides, setRides] = useState(initialRidesData);
@@ -53,8 +58,8 @@ export default function App() {
   const [appliedFilters, setAppliedFilters] = useState({ from: '', to: '', time: 'any' });
 
   // Modal & Drawer State
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(initialModalParam);
+  const [isChatOpen, setIsChatOpen] = useState(initialChatParam);
   const [activeChatRideId, setActiveChatRideId] = useState(1);
   const [activeGroupsCount, setActiveGroupsCount] = useState(14);
 

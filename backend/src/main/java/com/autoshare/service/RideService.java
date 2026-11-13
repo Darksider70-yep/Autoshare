@@ -40,6 +40,7 @@ public class RideService {
         this(rideRepository, bookingRepository, null, campusEmailDomain);
     }
 
+    @org.springframework.beans.factory.annotation.Autowired
     public RideService(RideRepository rideRepository,
                        BookingRepository bookingRepository,
                        @org.springframework.beans.factory.annotation.Autowired(required = false) UserVerificationClient userVerificationClient,

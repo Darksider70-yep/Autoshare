@@ -30,6 +30,20 @@ def main():
     print("Building Front Matter (Cover, Declaration, Certificate, Abstract, TOC, Lists)...")
     build_front_matter(doc)
     
+    # Add section break for Chapter 1 and restart page numbering at 1
+    from docx.oxml import parse_xml
+    from docx.oxml.ns import nsdecls
+    
+    ch1_section = doc.add_section()
+    ch1_section.top_margin = Inches(1.0)
+    ch1_section.bottom_margin = Inches(1.0)
+    ch1_section.left_margin = Inches(1.25)
+    ch1_section.right_margin = Inches(1.0)
+    
+    sectPr = ch1_section._sectPr
+    pgNumType = parse_xml(r'<w:pgNumType %s w:start="1"/>' % nsdecls('w'))
+    sectPr.append(pgNumType)
+    
     print("Building Chapter 1 (Introduction, Goals, Backlog, Release Plan)...")
     build_chapter_1(doc)
     
@@ -39,7 +53,7 @@ def main():
     print("Building Chapters 3 & 4 (Results, Test Breakdown, Performance, Conclusion)...")
     build_chapter_3_4(doc)
     
-    print("Building Appendices (Patent IDF, Production Code, Plagiarism Certificate)...")
+    print("Building Appendix A (Sample Coding)...")
     build_appendices(doc)
     
     output_path = 'docs/Full stack _SAMPLE PROJECT REPORT.docx'

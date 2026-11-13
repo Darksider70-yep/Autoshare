@@ -57,7 +57,7 @@ target/
 .factorypath
 
 # ------------------------------------------------------------------------------
-# 4. OS-Specific Metadata
+# 4. OS-Specific & Office Metadata
 # ------------------------------------------------------------------------------
 .DS_Store
 Thumbs.db
@@ -65,3 +65,19 @@ desktop.ini
 *.tmp
 *.swp
 *~
+~$*.docx
+~$*.xlsx
+~$*.pptx
+
+# ------------------------------------------------------------------------------
+# 5. Python Cache & Scratch Artifacts
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.json.bak
+extracted_page_numbers.json
+fast_page_check.json
+temp_terminal.html
+temp_term_*.html
