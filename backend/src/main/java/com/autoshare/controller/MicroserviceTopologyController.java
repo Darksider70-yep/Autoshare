@@ -36,7 +36,7 @@ public class MicroserviceTopologyController {
     @Value("${server.port:8080}")
     private String serverPort;
 
-    @Value("${autoshare.userservice.url:http://localhost:8080/api/users}")
+    @Value("${autoshare.userservice.url:http://localhost:8081/api/users}")
     private String userServiceUrl;
 
     public MicroserviceTopologyController(
@@ -108,7 +108,7 @@ public class MicroserviceTopologyController {
         clientUi.put("description", "React 19 Single Page Application with interactive tabs for JPA CRUD & Microservice Sandbox");
         clientUi.put("port", 3000);
         clientUi.put("runtimeStatus", "UP");
-        clientUi.put("reverseProxy", "Vite Development Server Proxy (/api -> :8080)");
+        clientUi.put("reverseProxy", "Vite Development Server Proxy (/api/users -> :8081, /api -> :8080)");
         services.add(clientUi);
 
         topology.put("services", services);

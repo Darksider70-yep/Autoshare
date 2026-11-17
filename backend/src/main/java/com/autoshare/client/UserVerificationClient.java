@@ -21,7 +21,7 @@ public class UserVerificationClient {
     private final RestTemplate restTemplate;
     private final UserService localUserService; // Fallback for unified single-port mode
 
-    @Value("${autoshare.userservice.url:http://localhost:8080/api/users}")
+    @Value("${autoshare.userservice.url:http://localhost:8081/api/users}")
     private String userServiceBaseUrl;
 
     public UserVerificationClient(RestTemplate restTemplate, UserService localUserService) {

@@ -8,6 +8,12 @@ export default defineConfig({
     port: 3000,
     open: true,
     proxy: {
+      // Microservice 1: User Management Service (Port 8081)
+      '/api/users': {
+        target: 'http://localhost:8081',
+        changeOrigin: true
+      },
+      // Microservice 2: Ride-Booking Service & Topology Gateway (Port 8080)
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true
